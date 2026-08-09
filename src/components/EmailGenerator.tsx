@@ -19,7 +19,7 @@ interface FormData {
 }
 
 export function EmailGenerator() {
-  const { user, openAuth } = useAuth();
+  const { user } = useAuth();
   const [form, setForm] = useState<FormData>({
     productName: "",
     productDescription: "",

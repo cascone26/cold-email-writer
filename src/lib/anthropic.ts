@@ -1,8 +1,18 @@
 import Anthropic from "@anthropic-ai/sdk";
 
-export const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY!,
-});
+let _anthropic: Anthropic | null = null;
+
+export function getAnthropic(): Anthropic {
+  if (!process.env.ANTHROPIC_API_KEY) {
+    throw new Error("Missing ANTHROPIC_API_KEY");
+  }
+  if (!_anthropic) {
+    _anthropic = new Anthropic({
+      apiKey: process.env.ANTHROPIC_API_KEY,
+    });
+  }
+  return _anthropic;
+}
 
 export const SYSTEM_PROMPT = `You are ColdDraft, an expert cold email copywriter who has written thousands of high-converting outreach emails for SaaS companies, agencies, consultants, and freelancers.
 

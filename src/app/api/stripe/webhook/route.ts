@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { setProUser, removeProUser } from "@/lib/pro-users";
 import Stripe from "stripe";
 
@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
   let event: Stripe.Event;
 
   try {
-    event = stripe.webhooks.constructEvent(
+    event = getStripe().webhooks.constructEvent(
       body,
       signature,
       process.env.STRIPE_WEBHOOK_SECRET!
@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
     case "customer.subscription.deleted": {
       const subscription = event.data.object as Stripe.Subscription;
       // Look up email from customer
-      const customer = await stripe.customers.retrieve(
+      const customer = await getStripe().customers.retrieve(
         subscription.customer as string
       );
 
@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
     case "customer.subscription.updated": {
       const subscription = event.data.object as Stripe.Subscription;
       if (subscription.status === "canceled" || subscription.status === "unpaid") {
-        const customer = await stripe.customers.retrieve(
+        const customer = await getStripe().customers.retrieve(
           subscription.customer as string
         );
         if (customer && !customer.deleted && "email" in customer && customer.email) {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { anthropic, SYSTEM_PROMPT } from "@/lib/anthropic";
+import { getAnthropic, SYSTEM_PROMPT } from "@/lib/anthropic";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { isProUser } from "@/lib/pro-users";
 
@@ -93,8 +93,8 @@ Sender title: ${senderTitle || "N/A"}
 
 Remember: return ONLY the JSON array, no markdown or code fences.`;
 
-  const response = await anthropic.messages.create({
-    model: "claude-sonnet-4-20250514",
+  const response = await getAnthropic().messages.create({
+    model: "claude-sonnet-4-6",
     max_tokens: 2048,
     system: SYSTEM_PROMPT,
     messages: [{ role: "user", content: userMessage }],
